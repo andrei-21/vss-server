@@ -18,13 +18,17 @@ use hyper::server::conn::http1;
 use hyper_util::rt::TokioIo;
 
 use crate::vss_service::VssService;
-use api::auth::{Authorizer, NoopAuthorizer};
+use api::auth::Authorizer;
 use api::kv_store::KvStore;
+use auth_impls::SigningAuthorizer;
 use impls::postgres_store::{Certificate, PostgresPlaintextBackend, PostgresTlsBackend};
 use std::sync::Arc;
+use std::time::Duration;
 
 pub(crate) mod util;
 pub(crate) mod vss_service;
+
+const VSS_SIGNING_AUTH_MAX_SKEW: Duration = Duration::from_secs(60);
 
 fn main() {
 	let args: Vec<String> = std::env::args().collect();
@@ -66,7 +70,8 @@ fn main() {
 				std::process::exit(-1);
 			},
 		};
-		let authorizer: Arc<dyn Authorizer> = Arc::new(NoopAuthorizer {});
+		let authorizer = SigningAuthorizer::new(VSS_SIGNING_AUTH_MAX_SKEW, None);
+		let authorizer: Arc<dyn Authorizer> = Arc::new(authorizer);
 		let postgresql_config =
 			config.postgresql_config.expect("PostgreSQLConfig must be defined in config file.");
 		let endpoint = postgresql_config.to_postgresql_endpoint();

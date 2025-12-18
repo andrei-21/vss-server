@@ -8,6 +8,7 @@ async-trait = "0.1.77"
 api = { path = "../api" }
 jsonwebtoken = { version = "9.3.0", default-features = false, features = ["use_pem"] }
 serde = { version = "1.0.210", features = ["derive"] }
+vss-signing-auth = { git = "https://github.com/andrei-21/breez-sdk", branch = "feature/vss-auth", default-features = false, features = ["auth"] }
 
 [dev-dependencies]
 tokio = { version = "1.38.0", default-features = false, features = ["rt-multi-thread", "macros"] }

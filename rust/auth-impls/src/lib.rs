@@ -11,12 +11,16 @@
 #![deny(rustdoc::private_intra_doc_links)]
 #![deny(missing_docs)]
 
+mod signing_authorizer;
+
 use api::auth::{AuthResponse, Authorizer};
 use api::error::VssError;
 use async_trait::async_trait;
 use jsonwebtoken::{decode, Algorithm, DecodingKey, Validation};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
+
+pub use signing_authorizer::SigningAuthorizer;
 
 /// A JWT based authorizer, only allows requests with verified 'JsonWebToken' signed by the given
 /// issuer key.
